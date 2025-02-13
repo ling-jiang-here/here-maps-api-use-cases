@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-harp.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+</head>
+
+<body>
+    <div style="width: 800px; height: 400px" id="mapContainer"></div>
+    <script>
+        var platform = new H.service.Platform({
+            apikey: "your_api_key",
+        });
+        var engineType = H.Map.EngineType["HARP"];
+
+        const jsonFilePath = 'https://ling-jiang-here.github.io/grey-clean.json';
+        fetch(jsonFilePath)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Cannot download the map style!');
+                }
+                return response.json();
+            })
+            .then(data => {
+                var style = new H.map.render.harp.Style(data);
+                var vectorLayer = platform.getOMVService().createLayer(style, { engineType });
+                var map = new H.Map(
+                    document.getElementById("mapContainer"),
+                    vectorLayer,
+                    {
+                        engineType,
+                        center: { lat: 52.51477270923461, lng: 13.39846691425174 },
+                        zoom: 13,
+                        pixelRatio: window.devicePixelRatio || 1,
+                    }
+                );
+                window.addEventListener("resize", () => map.getViewPort().resize());
+                var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+            })
+            .catch(error => {
+                console.error('Failed to download map style:\n', error);
+            });
+    </script>
+</body>
+
+</html>

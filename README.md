@@ -1,2 +1,1 @@
-"# here-maps-api-use-cases" 
-# here-maps-api-use-cases
+# maps-api-use-cases
