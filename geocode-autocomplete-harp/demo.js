@@ -12,7 +12,7 @@ const engineType = H.Map.EngineType['HARP'];
 
 // Create a platform object to communicate with the HERE REST APIs
 var platform = new H.service.Platform({
-	apikey: 'ahWlYm79rXSv2awiESub3BfWSJBHfW_KqzuEK0vE1i0',
+	apikey: window.apikey,
 	useHTTPS: secure
 }),
 	maptypes = platform.createDefaultLayers({ engineType }),
