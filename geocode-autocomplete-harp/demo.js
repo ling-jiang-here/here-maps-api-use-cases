@@ -1,39 +1,28 @@
-/*
-	author 
-	(C) HERE 2018
-	*/
-
-
-// check if the site was loaded via secure connection
-var secure = (location.protocol === 'https:') ? true : false;
-
 // Define a variable to hold the HARP engine type
-const engineType = H.Map.EngineType['HARP'];
+const engineType = H.Map.EngineType["HARP"];
 
 // Create a platform object to communicate with the HERE REST APIs
 var platform = new H.service.Platform({
-	apikey: window.apikey,
-	useHTTPS: secure
-}),
-	maptypes = platform.createDefaultLayers({ engineType }),
-	geocoder = platform.getSearchService();
+    apikey: window.apikey
+  }),
+  maptypes = platform.createDefaultLayers({ engineType }),
+  geocoder = platform.getSearchService();
+  var center = {lat: 52.5, lng: 13.4};
+  var zoom = 10;
 
 // Instantiate a map in the 'map' div, set the base map to normal
-map = new H.Map(document.getElementById('mapContainer'), maptypes.vector.normal.map, {
-	engineType,
-	center: { lat: 51.50643, lng: -0.12719 },
-	zoom: zoom,
-});
-
-//add JS API Release information
-releaseInfoTxt.innerHTML += "JS API: 3." + H.buildInfo().version;
-//add MRS Release information
-loadMRSVersionTxt();
-
-var releaseGeocoderShown = false;
+map = new H.Map(
+  document.getElementById("map"),
+  maptypes.vector.normal.map,
+  {
+    engineType,
+    center,
+    zoom,
+  }
+);
 
 // to store the returned locations
-var group;
+let group = new H.map.Group();
 
 // Enable the map event system
 var mapevents = new H.mapevents.MapEvents(map);
@@ -45,269 +34,189 @@ var behavior = new H.mapevents.Behavior(mapevents);
 var ui = H.ui.UI.createDefault(map, maptypes);
 
 // if the window is resized, we need to resize the viewport
-window.addEventListener('resize', function () { map.getViewPort().resize(); });
+window.addEventListener("resize", function () {
+  map.getViewPort().resize();
+});
 
 // handle checks
 var mapViewCheck = document.getElementById("useMapview-checkbox");
 var countryCheck = document.getElementById("useCountry-checkbox");
 
-
 mapViewCheck.onchange = function () {
-	if (this.checked) {
-		countryCheck.checked = false;
-	}
+  if (this.checked) {
+    countryCheck.checked = false;
+  }
 };
 
 countryCheck.onchange = function () {
-	if (this.checked) {
-		mapViewCheck.checked = false;
-	}
+  if (this.checked) {
+    mapViewCheck.checked = false;
+  }
 };
-
-
-
-
-
-
-
-// // register widget for the autocomplete box http://api.jqueryui.com/jQuery.widget/#jQuery-Widget2
-// $.widget("custom.autocompleteHighlight", $.ui.autocomplete, {
-// 	_renderItem: function (ul, item) {
-// 		return $('<li>' + item.label + '</li>').appendTo(ul);
-// 	}
-// });
-
-// // https://api.jquery.com/jquery.deferred/
-// function getReady() {
-// 	var deferredReady = $.Deferred();
-// 	$(document).ready(function () {
-// 		deferredReady.resolve();
-// 	});
-// 	return deferredReady.promise();
-// }
-
-// // url to be used for Autocomplete API calls
-// var autoCompelteUrl = 'http://autocomplete.geocoder.api.here.com/6.2/suggest.json';
-// if (secure) {
-// 	autoCompelteUrl = 'https://autocomplete.geocoder.api.here.com/6.2/suggest.json';
-// }
-
-// // define the autocomplete component
-// $("#search").autocompleteHighlight({
-// 	source: function (request, response) {
-// 		countries = getSelectedCountries();
-// 		var viewBounds = map.screenToLookAtData().bounds.getBoundingBox();
-
-// 		// setting request params for Geocoder Autocomplete API
-// 		// https://developer.here.com/documentation/geocoder-autocomplete/topics/resource-suggest.html
-// 		geocoderRequest = $.ajax({
-// 			url: autoCompelteUrl,
-// 			dataType: "json",
-// 			data: {
-// 				maxresults: 5,
-// 				country: countryCheck.checked ? countries : "",
-// 				language: document.getElementById("language").value,
-// 				query: request.term,
-// 				beginHighlight: '<mark>',
-// 				endHighlight: '</mark>',
-// 				app_id: app_id,
-// 				app_code: app_code,
-// 				mapview: mapViewCheck.checked ? viewBounds.getTopLeft().lat + "," +
-// 					viewBounds.getTopLeft().lng + ";" + viewBounds.getBottomRight().lat +
-// 					"," + viewBounds.getBottomRight().lng : ""
-// 			}
-// 		});
-
-// 		$.when(getReady(), geocoderRequest).done(function (readyResponse, geocoderResponse, placesResponse) {
-// 			var g = $.map(geocoderResponse[0].suggestions, function (item) {
-// 				var label = item.label.split(',').reverse().join();;
-// 				// replace style class used for highlight
-// 				value = label.replace(/(<mark>|<\/mark>)/gm, '');
-// 				name = label;
-// 				return {
-// 					label: name,
-// 					value: value
-// 				}
-// 			});
-
-// 			response(g);
-// 		});
-
-
-// 	},
-// 	minLength: 2,
-// 	select: function (event, ui) {
-// 		event.preventDefault();
-// 		if (ui.item) {
-// 			var selectedString = ui.item.value;
-// 			geocode(selectedString, 10);
-// 			$("#search").val(selectedString);
-// 		}
-// 		return true;
-// 	},
-
-// });
-
 
 // Focus on search input.
 document.getElementById("search").focus();
-const searchInput = document.getElementById('search');
-     
-// Custom autocomplete functionality
-searchInput.addEventListener('input', function () {
-	const input = searchInput.value;
-	if (input.length < 2) return;
+const searchInput = document.getElementById("search");
 
-	autocomplete(input);
-})
+// Custom autocomplete functionality
+searchInput.addEventListener("input", function () {
+  const input = searchInput.value;
+  if (input.length < 2) return;
+  address_list.style.display = "none";
+  autocomplete(input, 5, type='auto');
+});
 
 // Prepare the params for search
-function getParams(addr, limit) {
-	countries = getSelected('chk_c');
-	languages = getSelected('language');
+function getParams(addr, limit, type) {
+  countries = getSelected("chk_c");
+  languages = getSelected("language");
+  lookAt = map.getViewModel().getLookAtData();
+  viewBound = lookAt.bounds.getBoundingBox();
+  bounds = `${viewBound.W},${viewBound.ga},${viewBound.ca},${viewBound.fa}`;
 
-	console.log(mapViewCheck.checked);
-	console.log(countryCheck.checked);
+  params = {
+    q: addr,
+    limit: limit,
+    lang: languages.length ? languages : "en-US",
+  };
 
-	// var viewBounds = map.screenToLookAtData(center).bounds.getBoundingBox();
-	
-	params = {
-		q: addr,
-		limit: limit,
-		lang: languages.length ? languages : "en-US"
-	};
+  if (mapViewCheck.checked & type == 'auto') {
+    params["in"] = `bbox:${bounds}`;
+  } else if (mapViewCheck.checked & type == 'geo') {
+	params["at"] = `${lookAt.position.lat},${lookAt.position.lng}`;
+	params["in"] = `countryCode:GBR,BEL,SWE,AWS`
+  } else if (countryCheck.checked) {
+    params["in"] = `countryCode:${countries}`;
+  }
 
-	if (mapViewCheck.checked) {
-		params.in = `bbox:${mapviewBbox}`;
-	} else if (countryCheck & countries.length) {
-		params.in = `countryCode:${countries}`;
-	} 
-
-	return params;
+  return params;
 }
 
+const search_field = document.getElementById("search");
+const address_list = document.createElement("ul");
+address_list.style.border = "2px solid #000";
+address_list.style.backgroundColor = "#f0f0f0";
+address_list.style.padding = "10px";
+address_list.style.listStyleType = "none";
+address_list.addEventListener("mouseout", function (event) {
+  // Check if the mouse is moving out of the <ul> element
+  if (!address_list.contains(event.relatedTarget)) {
+    address_list.innerHTML = "";
+    address_list.style.display = "none";
+  }
+});
 
-function autocomplete(addr, limit) {
+// Autocomplete search and create address list
+function autocomplete(addr, limit, type='auto') {
+  geocoder.autocomplete(getParams(addr,limit,type), onSuccess, onError);
 
-	geocoder.autocomplete(
-		getParams(addr, limit),
-		onSuccess,
-		onError
-	);
+  function onSuccess(result) {
+    address_list.innerHTML = "";
+    var locations = result.items;
 
-	function onSuccess(result) {
-		// Clear map.
-		map.removeObjects(map.getObjects());
-		var locations = result.items;
+    if (locations.length) {
+      locations.forEach((location) => {
+        const li = document.createElement("li");
+        li.textContent = location.address.label;
+        li.style.borderBottom = "1px solid #ccc";
+        li.style.padding = "8px";
 
-		// Add a marker for each location found
-		locations.forEach((location) => {
-			// Create and add marker.
-			var marker = new H.map.Marker(location.position);
-			marker.draggable = true;
-			map.addObject(marker);
-		});
+        li.addEventListener("mouseover", function () {
+          li.style.backgroundColor = "#e0e0e0";
+        });
 
-		// Set result label to search value.
-		var label = locations[0].address.label;
+        li.addEventListener("mouseout", function () {
+          li.style.backgroundColor = "";
+        });
 
-		// Update search input.
-		document.getElementById("search").value = label;
-		// Blur the element to prevent the keyboard from showing up on mobile devices
-		document.getElementById("search").blur();
+        li.addEventListener("click", function (e) {
+          const addr = e.target.textContent;
+          geocode(addr, 10);
+        });
 
-		// Set map view.
-		var mapview = new H.geo.Rect(
-			locations[0].mapView.north,
-			locations[0].mapView.west,
-			locations[0].mapView.south,
-			locations[0].mapView.east
-		);
-		map.getViewModel().setLookAtData({ bounds: mapview }, true);
-	}
+        address_list.appendChild(li);
+		address_list.style.display = 'block';
+      });
 
-	function onError(error) {
-		console.error("Error while geocoding: " + error);
-	}
+      search.parentNode.insertBefore(address_list, search_field.nextSibling);
+    } else {
+		address_list.style.display = "none";
+      console.log("Autocomplete search found no result!");
+    }
+  }
+
+  function onError(error) {
+    alert("Autocomplete search failed: " + error);
+  }
 }
 
-
-
-
-// If enter pressed without any selection, 
-// geocode the provided text
+// If enter pressed without any selection, geocode the provided text
 document.getElementById("search").addEventListener("keypress", function (e) {
-	if (e.key === "Enter") {
-		document.querySelectorAll(".ui-menu-item").forEach(function (item) {
-			item.style.display = "none";
-		});
-		geocode(document.getElementById("search").value, 10);
-	}
+  if (e.key === "Enter") {
+    document.querySelectorAll(".ui-menu-item").forEach(function (item) {
+      item.style.display = "none";
+    });
+    geocode(document.getElementById("search").value, 10);
+  }
 });
 
 // get the selected country and languate
 mapping = {
-	'GBR': 'GBR',
-	'BEL': 'BEL',
-	'SWE': 'SWE',
-	'AUS': 'AWS', 
-	'EN': 'en-US',
-	'DE': 'de-DE',
-	'RU': 'ru-RU',
-	'BG': 'bg-BG'
-}
+  GBR: "GBR",
+  BEL: "BEL",
+  SWE: "SWE",
+  AUS: "AWS",
+  EN: "en-US",
+  DE: "de-DE",
+  RU: "ru-RU",
+  BG: "bg-BG",
+};
 
 function getSelected(options) {
-	var items = [];
-	const selectElement = document.getElementById(options);
-	const selectedOptions = selectElement.selectedOptions;
-	for (const option of selectedOptions) {
-		items.push(mapping[option.value]);
-	};
-	return items.join(',');
+  var items = [];
+  const selectElement = document.getElementById(options);
+  const selectedOptions = selectElement.selectedOptions;
+  for (const option of selectedOptions) {
+    items.push(mapping[option.value]);
+  }
+  return items.join(",");
 }
 
-
 // Gecode the provided text
-function geocode(addr, limit) {
+function geocode(addr, limit, type='geo') {
+  geocoder.geocode(getParams(addr, limit, type), onSuccess, onError);
 
-	geocoder.geocode(
-		getParams(addr, limit),
-		onSuccess,
-		onError
-	);
+  function onSuccess(result) {
+    var locations = result.items;
+	group.removeAll();
 
-	// callback when geocoder request is completed
-	function onSuccess(result) {
-		var position, mapview, bounds;
+    // Add a marker for each location found
+    if (locations.length) {
+      locations.forEach((location) => {
+        mapview = location.mapView;
 
-		if (group) { map.removeObject(group) }
-		group = new H.map.Group();
+        marker = new H.map.Marker({
+          lat: location.position.lat,
+          lng: location.position.lng,
+        });
+        group.addObject(marker);
+      });
+      // Add the locations group to the map
+      map.addObject(group);
+      // Zoom the map to the location
+      locations.length > 1
+        ? map
+            .getViewModel()
+            .setLookAtData({ bounds: group.getBoundingBox() }, true)
+        : map
+            .getViewModel()
+            .setLookAtData({ bounds: group.getBoundingBox(), zoom }, true);
+    } else {
+      consolg.log("Geocode search found no result!");
+    }
+  }
 
-		var locations = result.items;
-		// Add a marker for each location found
-		locations.forEach((location) => {
-			mapview = location.mapView;
-			bounds = new H.geo.Rect(mapview.north, mapview.west, mapview.south, mapview.east);
-
-			position = {
-				lat: location.position.lat,
-				lng: location.position.lng
-			};
-			marker = new H.map.Marker(position);
-			marker.label = location.title;
-			group.addObject(marker);
-		})
-		// Add the locations group to the map
-		map.addObject(group);
-		// Zoom the map to the location or locations
-		if (group.getChildCount() > 1)
-			map.getViewModel().setLookAtData({ bounds: group.getBoundingBox() }, true);
-		else
-			map.getViewModel().setLookAtData({ bounds: bounds }, true);
-	}
-
-	function onError(error) {
-		alert(`Geocoding search failed for errpr:\n${error}`);
-	}
+  function onError(error) {
+    alert(`Geocoding search failed:\n${error}`);
+  }
 }

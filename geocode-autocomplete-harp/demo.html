@@ -18,10 +18,51 @@
   </head>
 
   <body>
-    <h1>Geocoder Checkout</h1>
+    <h1>Geocoder Autocomplete</h1>
     <p>This example shows how to use Geocoder API to verify an address at checkout and allow the user to fix the resulting pin via drag-n-drop when relevant.</p>
     <input class="form-control input-wide" id="search" autocomplete="off" type="text" placeholder="Type in your full address, e.g. 701 Pike St, Seattle">
-    <div id="map"></div>
+    <div class="checkbox">
+      <label>
+        <input id="useMapview-checkbox" type="checkbox">Restrict Geocoder search to current Mapview
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input id="useCountry-checkbox" type="checkbox" checked="">Use Country filter
+      </label>
+    </div>
+    <div>
+      <table id="table1">
+        <tr>
+          <td height="" valign="" width="">Select a country to filter the results within the country:<br>
+            <select id="chk_c" multiple="">
+              <option value="GBR" selected="">United Kingdom</option>
+              <option value="BEL">Belgium</option>
+              <option value="SWE">Sweden</option>
+              <option value="AUS">Australia</option>
+              <option value="NZL">New Zealand</option>
+              <option value="USA">USA</option>
+              <option value="DEU">Germany</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <table id="table1">
+        <tr>
+          <td height="" valign="" width="">Select the result language:<br>
+            <select id="language" multiple="">
+              <option value="EN" selected="">English</option>
+              <option value="DE">German</option>
+              <option value="RU">Russian</option>
+              <option value="BG">Bulgarian</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="map" width="1000" height="500"></div>
     <script src="demo.js"></script>
   </body>
 </html>
