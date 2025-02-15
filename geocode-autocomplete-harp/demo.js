@@ -212,7 +212,7 @@ function geocode(addr, limit, type='geo') {
             .getViewModel()
             .setLookAtData({ bounds: group.getBoundingBox(), zoom }, true);
     } else {
-      consolg.log("Geocode search found no result!");
+      console.log("Geocode search found no result!");
     }
   }
 
