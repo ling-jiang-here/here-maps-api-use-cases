@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" 
+        src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" 
+        src="https://js.api.here.com/v3/3.1/mapsjs-harp.js"></script>
+    <script type="text/javascript" 
+        src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" 
+        src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <script type="text/javascript" charset="utf-8" 
+        src="https://js.api.here.com/v3/3.1/mapsjs-ui.js" ></script>
+    <link rel="stylesheet" type="text/css" 
+        href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script type="text/javascript" src='../test-credentials.js'></script> 
+  </head>
+  <body>
+    <div style="width: 800px; height: 400px" id="mapContainer"></div>
+    <script>
+      // Initiate and authenticate your connection to the HERE platform:
+      //coords =new H.geo.Point(clicklat, clicklon);
+      const engineType = H.Map.EngineType["HARP"];
+
+      platform = new H.service.Platform({
+        apikey: window.apikey,
+      });
+
+      defaultLayers = platform.createDefaultLayers({
+        engineType
+      });
+
+      console.log("Default layers created", defaultLayers);
+
+      map = new H.Map(
+        document.getElementById("mapContainer"),
+        defaultLayers.vector.normal.map,
+        {
+          engineType,
+          zoom: 13,
+          center: { lat: 48, lng: 10 },
+        }
+      );
+
+      // Ensure the map object is properly initialized
+      window.addEventListener("load", function () {
+        map.getViewPort().resize();
+      });
+      console.log("Map initialized", map);
+
+      // Enable the event system on the map instance:
+      mapEvents = new H.mapevents.MapEvents(map);
+
+      // Create default behavior with event system:
+      behavior = new H.mapevents.Behavior(mapEvents);
+
+      // Create the layer switcher UI
+      ui = H.ui.UI.createDefault(map, defaultLayers);
+      ui.removeControl("mapsettings");
+
+      trafficLayer = defaultLayers.vector.normal.traffic;
+      trafficIncidentsLayer = defaultLayers.vector.normal.trafficincidents;
+
+      // Create a custom map settings control with the terrain layer
+      mapSettingsControl = new H.ui.MapSettingsControl({
+        baseLayers: [
+          { label: "Normal", layer: defaultLayers.vector.normal.map },
+          { label: "Satellite", layer: defaultLayers.raster.satellite.map },
+          { label: "Terrain", layer: defaultLayers.vector.normal.topo },
+          { label: "ISM", layer: defaultLayers.vector.normal.ism },
+          { label: "Lite", layer: defaultLayers.vector.normal.lite },
+          { label: "Night", layer: defaultLayers.raster.normal.basenight },
+          { label: "ISM Night", layer: defaultLayers.vector.normal.ismnight },
+          { label: "Explore Night", layer: defaultLayers.vector.normal.litenight },
+        ],
+        layers: [
+          { label: "Traffic", layer: trafficLayer },
+          { label: "Traffic Incidents", layer: trafficIncidentsLayer },
+        ],
+        alignment: H.ui.LayoutAlignment.TOP_RIGHT,
+      });
+
+      // Add the custom map settings control to the UI
+      ui.addControl("customMapSettings", mapSettingsControl);
+
+      // Optionally, set an initial layer (e.g., terrain layer)
+      map.setBaseLayer(defaultLayers.vector.normal.map);
+
+      // Ensure traffic and traffic incidents layers are not visible on load
+      map.removeLayer(trafficLayer);
+      map.removeLayer(trafficIncidentsLayer);
+
+      // Add custom components
+      distanceMeasurementTool = new H.ui.DistanceMeasurement();
+      ui.addControl("distanceMeasurement", distanceMeasurementTool);
+
+      // Enable double click zoom:
+      behavior.enable(H.mapevents.Behavior.WHEELZOOM);
+
+      // Enable panning drag:
+      behavior.enable(H.mapevents.Behavior.DRAGGING);
+      console.log("UI components added", ui);
+    </script>
+  </body>
+</html>
