@@ -6,13 +6,14 @@
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-harp.js"></script>
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <script type="text/javascript" src='../test-credentials.js'></script> 
 </head>
 
 <body>
     <div style="width: 800px; height: 400px" id="mapContainer"></div>
     <script>
         var platform = new H.service.Platform({
-            apikey: "your_api_key",
+            apikey: window.apikey,
         });
         var engineType = H.Map.EngineType["HARP"];
 

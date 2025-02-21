@@ -9,6 +9,7 @@
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-harp.js"></script>
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script type="text/javascript" src='../test-credentials.js'></script> 
     <style>
         html,
         body {
@@ -49,7 +50,7 @@
     <div id="suggestions"></div>
     <script>
         var platform = new H.service.Platform({
-            apikey: "your_api_key"
+            apikey: window.apikey
         });
         var engineType = H.Map.EngineType['HARP'];
         var defaultLayers = platform.createDefaultLayers({
