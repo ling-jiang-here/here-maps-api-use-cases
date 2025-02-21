@@ -219,7 +219,7 @@ var secure = (location.protocol === 'https:') ? true : false;
 
 platform = new H.service.Platform({
 	// apikey: api_key,
-	apikey: 'ahWlYm79rXSv2awiESub3BfWSJBHfW_KqzuEK0vE1i0',
+	apikey: window.apikey,
 	useHTTPS: secure
 });
 const engineType = H.Map.EngineType['HARP'];
