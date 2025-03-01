@@ -196,8 +196,7 @@ var mapContainer = document.getElementById('mapContainer');
 var secure = (location.protocol === 'https:') ? true : false;
 
 platform = new H.service.Platform({
-	// apikey: api_key,
-	apikey: 'dAaFhKGHUsio1vb18egdSqyFQ-WFLKTK3AZmRqDflGk',
+	apikey: api_key,
 	useHTTPS: secure
 });
 const engineType = H.Map.EngineType['HARP'];
