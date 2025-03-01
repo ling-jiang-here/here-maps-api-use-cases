@@ -1,23 +1,8 @@
 /*
-		* authors Knut Strobeck
-		* (C) HERE 2015
-		*
-		* This is an example implementation of the route toll cost calculation offered by HERE.
-		* With a calculated route the route toll cost calculation service gets called and the
-		* response is presented in a summary.
-		* Please note that not all possible details of the route toll cost service is analysed
-		* by this demo.
-		*
-		* Cause JS has the limitations of GET request URL length there are several calls done to
-		* the route toll cost service. The route (links) gets split in overlapping segments.
-		* If they would not overlap you could loose toll informations which are only present between
-		* specific segments (links). Since the route toll cost service responds possibly with
-		* the same toll on the same links - the result gets post-processed to exclude the double
-		* toll costs. This limitation does not exists using POST or GET within other applications.
-		// migration by Sachin Jonda
-		// (C) HERE 2019 -> migrate to 3.1
-		// (C) HERE 2025 -> migrate to HARP
-		*/
+* authors Knut Strobeck
+* (C) HERE 2019 -> migrate to 3.1 by Sachin Jonda
+* (C) HERE 2025 -> migrate to HARP by Ling Jiang
+*/
 
 (function setValuesFromUrl() {
 	var indexOf = window.location.href.indexOf('?');
@@ -108,32 +93,25 @@ routingMode.children[1].textContent = "Short"
 routingMode.children[0].value = "fast"
 routingMode.children[1].value = "short"
 
-// update the Axle Count
-updateLabel('nrOfAxlesVehicle', "Axle Count");
-// update Trailer Axle Count
-updateLabel('nrOfAxlesTrailer', "Trailer Axle Count");
-// update Trailer Count
-updateLabel('trailerNr', "Trailer Count");
-// update Tunnel Category
-updateLabel('trailerType', "Tunnel Category");
-// update Vehicle Width
-updateLabel('totalWidth', 'Vehicle Width');
-// update Vehicle Length
-updateLabel('totalLength', 'Vehicle Length');
-// udpate Gross Weight
-updateLabel('vehWeight', 'Gross Weight');
-// update current weight
-updateLabel('totalWeight', 'Current Weight');
-// update Allow HOV
-updateLabel('hov', 'Allow HOV Lanes');
-// update Allow HOT
-updateLabel('disabledEquipped', "Allow HOT Lanes");
-// update Tiers Count
-updateLabel('nrOfTotalTires', "Tires Count");
-// update Speed CAP
-updateLabel('trailerHeight', "Speed cap (m/s)");
-// update Traffic Mode
-updateLabel('minPollution', "Traffic Mode");
+// labels to update
+var labels = {
+	'nrOfAxlesVehicle': "Axle Count",
+	'nrOfAxlesTrailer': "Trailer Axle Count",
+	'trailerNr': "Trailer Count",
+	'trailerType': "Tunnel Category",
+	'totalWidth': 'Vehicle Width',
+	'totalLength': 'Vehicle Length',
+	'vehWeight': 'Gross Weight',
+	'totalWeight': 'Current Weight',
+	'hov': 'Allow HOV Lanes',
+	'disabledEquipped': "Allow HOT Lanes",
+	'nrOfTotalTires': "Tires Count",
+	'trailerHeight': "Speed cap (m/s)",
+	'minPollution': "Traffic Mode"
+}
+labels.forEach((key, value) => {
+	updateLabel(key, value);
+})
 
 document.getElementById("routeButton").value = "Calculate Route";
 document.getElementById("routeButton").style.backgroundColor = "lightgreen";
@@ -219,7 +197,7 @@ var secure = (location.protocol === 'https:') ? true : false;
 
 platform = new H.service.Platform({
 	// apikey: api_key,
-	apikey: window.apikey,
+	apikey: 'dAaFhKGHUsio1vb18egdSqyFQ-WFLKTK3AZmRqDflGk',
 	useHTTPS: secure
 });
 const engineType = H.Map.EngineType['HARP'];
